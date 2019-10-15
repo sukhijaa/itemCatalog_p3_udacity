@@ -1,0 +1,6 @@
+/.idea
+.vagrant
+static/index.html
+
+/**/*.db
+/**/*.pyc
