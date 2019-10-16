@@ -2,9 +2,9 @@ import random
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from catalogDBSetup import Category, CatalogItem, Base, User
+from catalogDBSetup import Category, CatalogItem, Base, User, DB_CONNECT_STRING
 
-engine = create_engine('sqlite:///itemCatalog.db')
+engine = create_engine(DB_CONNECT_STRING)
 # Bind the engine to the metadata of the Base class so that the
 # declarative can be accessed through a DBSession instance
 Base.metadata.bind = engine

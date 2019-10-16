@@ -12,6 +12,7 @@ Base = declarative_base()
 secret_key = ''.join(
     random.choice(string.ascii_uppercase + string.digits) for x in range(32))
 
+DB_CONNECT_STRING = 'postgresql://itemCatalog:itemCatalog@localhost/itemCatalog'
 
 class User(Base):
     __tablename__ = 'user'
@@ -93,6 +94,6 @@ class CatalogItem(Base):
         }
 
 
-engine = create_engine('postgresql://itemCatalog:itemCatalog@localhost/itemCatalog')
+engine = create_engine(DB_CONNECT_STRING)
 
 Base.metadata.create_all(engine)

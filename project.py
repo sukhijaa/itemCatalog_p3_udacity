@@ -8,27 +8,27 @@ from flask import make_response
 from flask_httpauth import HTTPBasicAuth
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import flow_from_clientsecrets
-# from sqlalchemy import create_engine, asc
-# from sqlalchemy.orm import sessionmaker, scoped_session
-# from sqlalchemy.exc import SQLAlchemyError
-#
-# from catalogDBSetup import Category, CatalogItem, Base, User
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.exc import SQLAlchemyError
+
+from catalogDBSetup import Category, CatalogItem, Base, User, DB_CONNECT_STRING
 
 auth = HTTPBasicAuth()
 
 app = Flask(__name__)
 
 # Connect to Database and create database session
-# engine = create_engine('sqlite:///itemCatalog.db')
-# Base.metadata.bind = engine
-#
-# session = scoped_session(sessionmaker(bind=engine))
+engine = create_engine(DB_CONNECT_STRING)
+Base.metadata.bind = engine
+
+session = scoped_session(sessionmaker(bind=engine))
 allCatsCached = []
 
 
-# @app.teardown_request
-# def remove_session(ex=None):
-#     session.remove()
+@app.teardown_request
+def remove_session(ex=None):
+    session.remove()
 
 
 def getCatalogItemJson(catalogItem):
