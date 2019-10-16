@@ -89,13 +89,17 @@ def getCategoriesData():
     return allCatsCached
 
 
+def getRequestDataInJson(dataToLoad):
+    return json.loads(dataToLoad.decode('utf-8'))
+
+
 @app.route('/loginUser/<provider>', methods=['POST'])
 def loginUser(provider):
     """Handler for Loggin a user in
     Provider could be google or userInput
     """
     # STEP 1 - Parse the auth code
-    requestData = json.loads(request.data)
+    requestData = getRequestDataInJson(request.data)
     requestData = requestData['body']
     if provider == 'google':
         auth_code = requestData['access_token']
@@ -119,7 +123,7 @@ def loginUser(provider):
         url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?'
                'access_token=%s' % access_token)
         h = httplib2.Http()
-        result = json.loads(h.request(url, 'GET')[1])
+        result = getRequestDataInJson(h.request(url, 'GET')[1])
         # If there was an error in the access token info, abort.
         if result.get('error') is not None:
             print('Authorization code is not valid')
@@ -214,7 +218,7 @@ def updateUserInfo():
     """
     Its a API call handler to update the user profile
     """
-    reqData = json.loads(request.data)
+    reqData = getRequestDataInJson(request.data)
     token = reqData['token']
     reqData = reqData['body']
     userEditing = User.verify_auth_token(token)
@@ -258,7 +262,7 @@ def newItemInCategory():
     if request.method == 'GET':
         return render_template('index.html', categoryData=getCategoriesData())
     elif request.method == 'POST':
-        reqData = json.loads(request.data)
+        reqData = getRequestDataInJson(request.data)
         token = reqData['token']
         reqData = reqData['body']
         userEditing = User.verify_auth_token(token)
@@ -306,7 +310,7 @@ def addCategory():
     if request.method == 'GET':
         return render_template('index.html', categoryData=getCategoriesData())
     elif request.method == 'POST':
-        reqData = json.loads(request.data)
+        reqData = getRequestDataInJson(request.data)
         token = reqData['token']
         reqData = reqData['body']
         userEditing = User.verify_auth_token(token)
@@ -342,7 +346,7 @@ def editCategory(category_id):
     if request.method == 'GET':
         return render_template('index.html', categoryData=getCategoriesData())
     elif request.method == 'POST':
-        reqData = json.loads(request.data)
+        reqData = getRequestDataInJson(request.data)
         token = reqData['token']
         reqData = reqData['body']
         userEditing = User.verify_auth_token(token)
@@ -389,7 +393,7 @@ def editItem(item_id):
     if request.method == 'GET':
         return render_template('index.html', categoryData=getCategoriesData())
     elif request.method == 'POST':
-        reqData = json.loads(request.data)
+        reqData = getRequestDataInJson(request.data)
         token = reqData['token']
         reqData = reqData['body']
         userEditing = User.verify_auth_token(token)
@@ -435,7 +439,7 @@ def deleteCategoryAndItsItems(category_id):
     if request.method == 'GET':
         return render_template('index.html', categoryData=getCategoriesData())
     else:
-        reqData = json.loads(request.data)
+        reqData = getRequestDataInJson(request.data)
         token = reqData['token']
         userEditing = User.verify_auth_token(token)
         if userEditing is None:
@@ -481,7 +485,7 @@ def deleteSingleCatalogItem(item_id):
     if request.method == 'GET':
         return render_template('index.html', categoryData=getCategoriesData())
     else:
-        reqData = json.loads(request.data)
+        reqData = getRequestDataInJson(request.data)
         token = reqData['token']
         userEditing = User.verify_auth_token(token)
         if userEditing is None:
