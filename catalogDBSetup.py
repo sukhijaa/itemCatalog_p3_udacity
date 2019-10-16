@@ -20,7 +20,7 @@ class User(Base):
     username = Column(String(32), index=True)
     picture = Column(String)
     email = Column(String)
-    password_hash = Column(String(64))
+    password_hash = Column(String)
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
