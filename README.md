@@ -3,79 +3,15 @@
 This application simply focuses on creating a Supermarket Dictionary which will list the items present in the supermarket into categories while having various features of Adding/Removing/Modifying the details about any item or category. 
 User can add desciption to the item or category so user can understand the item better.
 
+## Live Demo
 
-## Getting Started
+http://ec2-18-219-184-137.us-east-2.compute.amazonaws.com/
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Connect to EC2 Instance
 
-### Prerequisites
+Public IP : 18.219.184.137 <br/>
+Public DNS : ec2-18-219-184-137.us-east-2.compute.amazonaws.com
 
-```
-1. Node - v9+ - https://nodejs.org/en/download/
-2. Python v3+ - https://www.python.org/downloads/
-3. Vagrant - https://www.vagrantup.com/downloads.html
-4. Virtual Box - https://www.virtualbox.org/
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-#### Setting the system up
-Assumes that you have installed all the tools mentioned above 
-
-##### Server
-```
-1. Navigate to ./server using any Shell Terminal
-2. Run "$ vagrant up". This will take 15-20mins
-3. Run "$ vagrant ssh" to log into the Linux Bases VM.
-4. Once logged in, run "$ cd /vagrant" and you will be inside the shared folder.
-5. To initialize DB, run catalogDBSetup.py file.
-6. If you need some dummy data to start with, also run itemCatalogFiller.py
-7. Run project.py script to start the server on port 5000
-```
-
-##### UI (for Development only)
-```
-1. Open command prompt in root folder
-2. Run "$ npm install" to install all the dependencies.
-3. Run "$ npm run dev" to start hot development env on port 8000
-4. Run "$ npm run prod" to create bundled JS and CSS file for production environment
-```
-
-You are now all set to use the application.
-In your browser, go to localhost:5000 and you shall see the home page of ItemCatalog
-
-
-### And coding style tests
-
-For UI
-
-```
-$ npm run eslint -> To get list of linting errors
-$ npm run eslint-fix -> To fix the auto-fixable errors
-```
-
-For Server
-```
-Python code style tool
-```
-
-## Deployment
-
-To deploy latest UI changes onto server
-```
-$ npm run prod
-
-Refresh browser window after clearing the cache and you shall see your changes.
-```
-
-To make changes in server : 
-Server should refresh as soon as you make any changes in project.py file.
-If it doesn't
-```
-$ python project.py
-```
 
 ## About the Project
 
@@ -126,7 +62,7 @@ Exposed API to get list of all Categories and their items in System:
 ```
 
 ### DB Details
-There are 3 tables in the DB
+There are 3 tables in the Postgres DB
 
 ```
 categories: [(id INTEGER PK), (name STRING 60 NOT_NULL), (description STRING 250)]
@@ -138,89 +74,54 @@ categories table holds all the categories created in the system
 catalog_item holds all the items defined in the system with a Foreign Key relation to Category this item belongs to
 user table holds list of recognized users
 
-## Login Flow
+## Deployment Details
 
-### Google - OAuth2.0 Flow
-1. As user click on Google, a popup opens where user will be asked to login into google account
-2. Once Login is successful, Authorization Token from google is sent to Backend using POST /loginUser/google
-3. Server then Queries the Google Server using Authorization Token and if succesful fetches Email, Profile Picture and Name of user
-4. This information is added into DB and a new ID for user is generated from DB.
-5. Server then creates a new encrypted string which contains TImeStamp and ID of user
-6. This token and various user details are sent back as response of POST API called by UI.
-7. UI then saves this token and userName into Session Storage. This is necessary so that if user refreshes the page, UI doesn't need to query the server
-8. For any POST request sent by user, UI also sends this token for authorization
-9. Server than decrypts this token and verifies if user is found and if session is not expired.
-10. If Expired or Faulty Token found, backend sends a 444 Response which lets UI log the User out and asks him to login again
+This app is using Amazon EC2 Ubuntu 16.04 based instance.
 
-### User Input
-1. As user enters his email and password, this data is sent to server
-2. If user email id is not found in DB, a new User is created and steps 5 onwards from Google Login Flow are followed
-3. If user is found, Server then creates a hash out of this password and checks this hashed value in DB against this user
-4. If matches, steps 5 onwards from Google Login Flow are followed
+### Prepare to deploy Item Catalog Project
+1. Install Apache and mod_wsgi
+    * `$ sudo apt-get install apache2`
+    * `$ sudo apt-get install libapache2-mod-wsgi-py3`
+    * `$ sudo service apache2 restart`
+2. Install Python and Git
+    * `$ sudo apt-get install git`
+    * `$ sudo apt-get install python3`
+3. Clone Item Catalog App from Github
+    * `$ sudo mkdir /var/www/itemcatalog`
+    * Move into itemcatalog directory and clone the app repository:
+        * `$ cd /var/www/itemcatalog`
+        * `$ git clone https://github.com/sukhijaa/itemCatalog_p3_udacity.git`
+4. Install and configure the virtual environment
+    * Install pip: `$ sudo apt-get install python3-pip`
+    * Install virtualenv: `$ sudo pip3 install virtualenv`
+    * Rename virtualenv: `$ sudo virtualenv venv`
+    * Activate virtual environment: `$ source venv/bin/activate`
+    * Install all modules for this project,  `$ pip3 install -r requirements.txt`
+    * Restart apache: `$ sudo service apache2 restart`
+5. Install PostgreSQL and Initialize DB
+    * Install PostgreSQL: `sudo apt-get install postrgresql postgresql-contrib`
+    * Setup database: `$ python3 catalogDBSetup.py`
+    * Initialize DB Tables with Data: `$ python3 itemCatalogFiller.py`
+6. Configure and Enable a new virtual host
+    * Move file itemCatalog.conf to /etc/apache2/sites-available
+    * Enable this new virtual host: `$ sudo a2ensite itemcatalog.conf`
+7. Restart Apache server
+    * `$ sudo service apache2 restart`
 
-## HOW TO
-1. Login : 
-```
-a. Visit /login OR vist / and click on Login Button on Top Right Corner
-b. Enter your credentials. If you are not an existing user, a new user will be created for you with name same as your email id
-c. You can also login using your Google account. Just Make sure browser allows popup
-```
-2. Add a New Category : 
-```
-a. Click on your name on Top Right Corner (only after Login)
-b. A dropdown will open. Select option to Add Category
-c. Fill in desired details and click on Add Button
-```
-3. Go to Homepage : 
-```
-a. CLick on Item Catalog on top left corner of screen
-```
-4. Edit a Category :
-```
-a. Go to homepage
-b. Against category name, thre will be 2 options : Edit and Delete
-c. Click on Edit and follow
-```
-5. Delete a Category :
-```
-a. Go to homepage
-b. Against category name, thre will be 2 options : Edit and Delete
-c. Click on Delete and follow
-```
-6. Add a new Item : 
-```
-a. Go to Homepage
-b. On left of Category Name, click on Arrow to expand the Category to see list of all items
-c. Click Add Item link at bottom
 
-OR
-
-a. Go to homepage
-b. Click on Category Name you would like to add a item to
-c. On Bottom, you will see option to Add Item
-```
-7. Edit Item : 
-```
-a. Go to homepage
-b. Change grouping to Group By None
-c. Find your Item in List Available
-d. Click Edit
-```
-8. Delete Item :
-```
-a. Go to homepage
-b. Change grouping to Group By None
-c. Find your Item in List Available
-d. Click Delete
-``` 
-9. Edit Password or Display Name : 
-```
-a. Click on your name on Top Right Corner (only after Login)
-b. A dropdown will open. Select option Profile
-c. Fill in desired details and click on Save Button
-```
 ## Authors
 
 Abhishek Sukhija - abhisukhija@ymail.com
+
+---
+
+## References and Resources
+* [SSH Essentials: Working with SSH Servers, Clients, and Keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys)
+* [README.md from MomokoXu](https://github.com/MomokoXu/Project-Linux-Server-Configuration/blob/master/README.md)
+* [askubuntu](https://askubuntu.com/questions)
+* [Stackoverflow](https://stackoverflow.com/)
+* [Udacity Forum](https://discussions.udacity.com/)
+## Copyright
+This is a project for practicing skills in databses and backend courses not for any business use. Some templates and file description are used from [Udacity FSND program](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004). Please contact me if you think it violates your rights.
 
 
