@@ -11,7 +11,7 @@ http://ec2-18-219-184-137.us-east-2.compute.amazonaws.com/
 
 Public IP : 18.219.184.137 <br/>
 Public DNS : ec2-18-219-184-137.us-east-2.compute.amazonaws.com
-
+<br/>SSH Port: Default Port i.e. 22
 
 ## About the Project
 
