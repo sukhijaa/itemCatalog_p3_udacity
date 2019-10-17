@@ -108,7 +108,7 @@ def loginUser(provider):
         try:
             # Upgrade the authorization code into a credentials object
             oauth_flow = flow_from_clientsecrets(
-                'client_secrets.json', scope='')
+                '/var/www/itemCatalog/client_secrets.json', scope='')
             oauth_flow.redirect_uri = 'postmessage'
             credentials = oauth_flow.step2_exchange(auth_code)
         except FlowExchangeError as e:
