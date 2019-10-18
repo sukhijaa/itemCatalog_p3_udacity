@@ -47,11 +47,11 @@ To update and upgrade all system libraries and installed softwares :
         * Make directory for your grader ssh: `$ sudo mkdir /home/grader/.ssh`
         * Paste the content you've copied from your local machine into authorized_keys: `$ touch /home/grader/.ssh/authorized_keys`
         * Change the permission and ownership of the key pair:
-        `$ sudo chmod 700 /home/grader/.ssh`
-        `$ sudo chmod 600 /home/grader/.ssh/authorized_keys`
-        `$ sudo chown -R grader:grader /home/grader/.ssh`
+            * `$ sudo chmod 700 /home/grader/.ssh`
+            * `$ sudo chmod 600 /home/grader/.ssh/authorized_keys`
+            * `$ sudo chown -R grader:grader /home/grader/.ssh`
     * **Now login the server as user grader** with grader's key in your local machine
-    `$ ssh -i ~/.ssh/graderkey grader@18.219.184.137`
+        * `$ ssh -i ~/.ssh/graderkey grader@18.219.184.137`
     
     
 ### Configure the Uncomplicated Firewall
