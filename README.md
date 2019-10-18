@@ -15,68 +15,59 @@ Public DNS : ec2-18-219-184-137.us-east-2.compute.amazonaws.com
 
 ## About the Project
 
-UI for the project is written using ReactJS with Redux with Webpack used for bundling of JS and CSS code
-ItemCatalog is a single-page web-app which performs all tasks based on CRUD operations implemented in Python server.
-This app lets you Login using Google or manually using Email and Password.
-For both cases, if user is not already present in system, a new entry is created.
+This project is actually the deployment of ItemCatalog App already created.
+<br/>[ItemCatalog App](https://github.com/sukhijaa/itemCatalog_p2_udacity)
 
-
-On Server side, we have various CRUD operations in s RESTful manner.  
-
-### Allowed URIs:
-All the GET requests are listed down here.
-Since UI is a Reach Single Page App, there will be no server calls while you are moving around in the website.
-But these below are the paths which will load the website for you if entered manually.
-
-```
-GET /item/new
-GET /category/new
-GET /category/:categoryID/edit
-GET /item/:itemID/edit
-GET /category/:categoryID/delete
-GET /item/:itemID/delete
-GET /getAllCategories
-GET /
-GET /items
-GET /categories
-GET /login
-```
-
-This app uses POST for all modify and delete operations since each of these operations need authentication before being applied into the DB.
-If somehow your session expires while you were working, server sends a special 444 code which will redirect you to login screen again.
-POST requests supported are:
-```
-POST /loginUser/:provider -> Allowed values : 'google', 'userInput'
-POST /profile/update -> To update Name and Password of user
-POST /item/new
-POST /category/new
-POST /item/:itemID/edit
-POST /category/:categoryID/edit
-POST /item/:itemID/delete
-POST /category/:categoryID/delete
-```
-
-Exposed API to get list of all Categories and their items in System: 
-```
-/getAllCategories
-```
-
-### DB Details
-There are 3 tables in the Postgres DB
-
-```
-categories: [(id INTEGER PK), (name STRING 60 NOT_NULL), (description STRING 250)]
-catalog_item : [(name STRING 80), (id INTEGER PK), (description STRING 250), (categoryId INTEGER ForeignKey[Categories.id])]
-user: [(id INTEGER PK), (username STRING 32 INDEX), (picture STRING), (email STRING), (password_hash STRING 64)]
-```
-
-categories table holds all the categories created in the system
-catalog_item holds all the items defined in the system with a Foreign Key relation to Category this item belongs to
-user table holds list of recognized users
+This includes a full fledged deployment of a running Python App.
+From creating a Ubuntu Instance on a cloud, to configuring WSDL on it to serve the app to securing the Instance using Firewall.
 
 ## Deployment Details
 
 This app is using Amazon EC2 Ubuntu 16.04 based instance.
+<br/> To create a instance, register on EC2 and create a OS Only Linux Instance using Ubuntu 16.04
+
+### Initializing
+
+Its very important to stay updated with all the system libraries you have.
+To update and upgrade all system libraries and installed softwares : 
+    * `$ sudo apt-get update`
+    * `$ sudo apt-get upgrade`
+
+### User Management
+1. Create user "grader"
+    * `$ sudo adduser grader`
+2. Give "grader" sudo permission
+    * `$ sudo nano /etc/sudoers`
+    * Paste **grader ALL=(ALL) NOPASSWD:ALL** into the file, save and exit.
+3. Configure the key-based authentication for grader user
+    * **In your local machine**
+        * Generate encryption key: `$ ssh-keygen ~/.ssh/graderkey`
+        * Get content and copy it: `$ cat ~/.ssh/graderkey.pub`
+    * **In your instance server**
+        * Make directory for your grader ssh: `$ sudo mkdir /home/grader/.ssh`
+        * Paste the content you've copied from your local machine into authorized_keys: `$ touch /home/grader/.ssh/authorized_keys`
+        * Change the permission and ownership of the key pair:
+        `$ sudo chmod 700 /home/grader/.ssh`
+        `$ sudo chmod 600 /home/grader/.ssh/authorized_keys`
+        `$ sudo chown -R grader:grader /home/grader/.ssh`
+    * **Now login the server as user grader** with grader's key in your local machine
+    `$ ssh -i ~/.ssh/graderkey grader@18.219.184.137`
+    
+    
+### Configure the Uncomplicated Firewall
+1. `$ sudo ufw default deny incoming`
+2. `$ sudo ufw default allow outgoing`
+3. `$ sudo ufw allow ssh`
+4. `$ sudo ufw allow 2222/tcp`
+5. `$ sudo ufw allow 80/tcp`
+6. `$ sudo ufw allow 123/udp`
+7. `$ sudo ufw enable`
+
+### Allow SSH Connection on port 2222
+1. `$ sudo vi /etc/ssh/ssdh_config`
+2. Add new line `PORT 2222` under existing line `PORT 22`. Save and Quit
+3. `$ sudo service ssh restart`
+
 
 ### Prepare to deploy Item Catalog Project
 1. Install Apache and mod_wsgi
