@@ -30,8 +30,8 @@ This app is using Amazon EC2 Ubuntu 16.04 based instance.
 
 Its very important to stay updated with all the system libraries you have.
 To update and upgrade all system libraries and installed softwares : 
-    * `$ sudo apt-get update`
-    * `$ sudo apt-get upgrade`
+<br/>    * `$ sudo apt-get update`
+<br/>    * `$ sudo apt-get upgrade`
 
 ### User Management
 1. Create user "grader"
